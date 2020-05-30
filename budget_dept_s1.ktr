@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>budget_dept</name>
+    <name>budget_dept_s1</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -437,7 +437,7 @@
   <notepads>
   </notepads>
   <connection>
-    <name>bss_pro</name>
+    <name>47bss_pro</name>
     <server>47.98.203.232</server>
     <type>MYSQL</type>
     <access>Native</access>
@@ -516,19 +516,9 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Java 代码（科目父级关系）</from>
-      <to>过滤记录-支出（过滤空行） </to>
-      <enabled>N</enabled>
-    </hop>
-    <hop>
       <from>过滤记录-支出（过滤空行） </from>
       <to>表输出-支出</to>
-      <enabled>N</enabled>
-    </hop>
-    <hop>
-      <from>Java 代码（科目父级关系）</from>
-      <to>过滤记录-收入（过滤空行）</to>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
     </hop>
     <hop>
       <from>过滤记录-收入（过滤空行）</from>
@@ -537,12 +527,17 @@
     </hop>
     <hop>
       <from>Java 代码（科目父级关系）</from>
-      <to>正则表达式</to>
+      <to>正则表达式（根据文件名拆分年和部门）</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>正则表达式</from>
+      <from>正则表达式（根据文件名拆分年和部门）</from>
       <to>过滤记录-收入（过滤空行）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>正则表达式（根据文件名拆分年和部门）</from>
+      <to>过滤记录-支出（过滤空行） </to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -689,6 +684,132 @@
     </remotesteps>
     <GUI>
       <xloc>80</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Java 代码（科目父级关系）</name>
+    <type>UserDefinedJavaClass</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <definitions>
+      <definition>
+        <class_type>TRANSFORM_CLASS</class_type>
+        <class_name>Processor</class_name>
+        <class_source>String psubject_in = null;
+String psubject_out = null;
+
+public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws KettleException {
+  if (first) {
+    first = false;
+
+    /* TODO: Your code here. (Using info fields)
+
+    FieldHelper infoField = get(Fields.Info, "info_field_name");
+
+    RowSet infoStream = findInfoRowSet("info_stream_tag");
+
+    Object[] infoRow = null;
+
+    int infoRowCount = 0;
+
+    // Read all rows from info step before calling getRow() method, which returns first row from any
+    // input rowset. As rowMeta for info and input steps varies getRow() can lead to errors.
+    while((infoRow = getRowFrom(infoStream)) != null){
+
+      // do something with info data
+      infoRowCount++;
+    }
+    */
+  }
+
+  Object[] r = getRow();
+
+  if (r == null) {
+    setOutputDone();
+    return false;
+  }
+
+  // It is always safest to call createOutputRow() to ensure that your output row's Object[] is large
+  // enough to handle any new fields you are creating in this step.
+  r = createOutputRow(r, data.outputRowMeta.size());
+
+  /* TODO: Your code here. (See Sample)
+
+  // Get the value from an input field
+  String foobar = get(Fields.In, "a_fieldname").getString(r);
+
+  foobar += "bar";
+    
+  // Set a value in a new output field
+  get(Fields.Out, "output_fieldname").setValue(r, foobar);
+
+  */
+
+	String subject_in = get(Fields.In, "项目").getString(r);
+	String subject_out = get(Fields.In, "项目_1").getString(r);
+
+	// 收入
+	if (null != subject_in &amp;&amp; (subject_in.contains("本年收入") || subject_in.contains("上年结转"))) {
+		psubject_in = subject_in;
+	}
+	if (null != subject_in &amp;&amp; subject_in.contains("收入总计")) {
+		psubject_in = "";
+	}
+	get(Fields.Out, "psubject_in").setValue(r, psubject_in);
+
+	// 支出
+	if (null != subject_out &amp;&amp; (subject_out.contains("本年支出") || subject_out.contains("结转下年"))) {
+		psubject_out = subject_out;
+	}
+	if (null != subject_out &amp;&amp; subject_out.contains("支出总计")) {
+		psubject_out = "";
+	}
+	get(Fields.Out, "psubject_out").setValue(r, psubject_out);
+
+  // Send the row on to the next step.
+  putRow(data.outputRowMeta, r);
+
+  return true;
+}
+</class_source>
+      </definition>
+    </definitions>
+    <fields>
+      <field>
+        <field_name>psubject_in</field_name>
+        <field_type>String</field_type>
+        <field_length>-1</field_length>
+        <field_precision>-1</field_precision>
+      </field>
+      <field>
+        <field_name>psubject_out</field_name>
+        <field_type>String</field_type>
+        <field_length>-1</field_length>
+        <field_precision>-1</field_precision>
+      </field>
+    </fields>
+    <clear_result_fields>N</clear_result_fields>
+    <info_steps/>
+    <target_steps/>
+    <usage_parameters/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>512</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -858,324 +979,6 @@ var UID2 = new UUID().id;</jsScript_script>
     </GUI>
   </step>
   <step>
-    <name>表输出-支出</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>bss_pro</connection>
-    <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s1</table>
-    <commit>1000000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-      <field>
-        <column_name>subject</column_name>
-        <stream_name>项目_1</stream_name>
-      </field>
-      <field>
-        <column_name>budget_num</column_name>
-        <stream_name>合计</stream_name>
-      </field>
-      <field>
-        <column_name>s1</column_name>
-        <stream_name>一般公共预算财政拨款</stream_name>
-      </field>
-      <field>
-        <column_name>s2</column_name>
-        <stream_name>政府性基金预算财政拨款</stream_name>
-      </field>
-      <field>
-        <column_name>id</column_name>
-        <stream_name>id_out</stream_name>
-      </field>
-      <field>
-        <column_name>psubject</column_name>
-        <stream_name>psubject_out</stream_name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>848</xloc>
-      <yloc>272</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>表输出-收入</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>bss_pro</connection>
-    <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s1</table>
-    <commit>1000000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-      <field>
-        <column_name>subject</column_name>
-        <stream_name>项目</stream_name>
-      </field>
-      <field>
-        <column_name>budget_num</column_name>
-        <stream_name>预算数</stream_name>
-      </field>
-      <field>
-        <column_name>id</column_name>
-        <stream_name>id_in</stream_name>
-      </field>
-      <field>
-        <column_name>psubject</column_name>
-        <stream_name>psubject_in</stream_name>
-      </field>
-      <field>
-        <column_name>year</column_name>
-        <stream_name>year</stream_name>
-      </field>
-      <field>
-        <column_name>title</column_name>
-        <stream_name>title</stream_name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>848</xloc>
-      <yloc>112</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>过滤记录-收入（过滤空行）</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <send_true_to>表输出-收入</send_true_to>
-    <send_false_to/>
-    <compare>
-      <condition>
-        <negated>Y</negated>
-        <conditions>
-          <condition>
-            <negated>N</negated>
-            <leftvalue>项目</leftvalue>
-            <function>IS NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>OR</operator>
-            <leftvalue>项目</leftvalue>
-            <function>ENDS WITH</function>
-            <rightvalue/>
-            <value>
-              <name>constant</name>
-              <type>String</type>
-              <text>……</text>
-              <length>-1</length>
-              <precision>-1</precision>
-              <isnull>N</isnull>
-              <mask/>
-            </value>
-          </condition>
-        </conditions>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>672</xloc>
-      <yloc>112</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Java 代码（科目父级关系）</name>
-    <type>UserDefinedJavaClass</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <definitions>
-      <definition>
-        <class_type>TRANSFORM_CLASS</class_type>
-        <class_name>Processor</class_name>
-        <class_source>String psubject_in = null;
-String psubject_out = null;
-
-public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws KettleException {
-  if (first) {
-    first = false;
-
-    /* TODO: Your code here. (Using info fields)
-
-    FieldHelper infoField = get(Fields.Info, "info_field_name");
-
-    RowSet infoStream = findInfoRowSet("info_stream_tag");
-
-    Object[] infoRow = null;
-
-    int infoRowCount = 0;
-
-    // Read all rows from info step before calling getRow() method, which returns first row from any
-    // input rowset. As rowMeta for info and input steps varies getRow() can lead to errors.
-    while((infoRow = getRowFrom(infoStream)) != null){
-
-      // do something with info data
-      infoRowCount++;
-    }
-    */
-  }
-
-  Object[] r = getRow();
-
-  if (r == null) {
-    setOutputDone();
-    return false;
-  }
-
-  // It is always safest to call createOutputRow() to ensure that your output row's Object[] is large
-  // enough to handle any new fields you are creating in this step.
-  r = createOutputRow(r, data.outputRowMeta.size());
-
-  /* TODO: Your code here. (See Sample)
-
-  // Get the value from an input field
-  String foobar = get(Fields.In, "a_fieldname").getString(r);
-
-  foobar += "bar";
-    
-  // Set a value in a new output field
-  get(Fields.Out, "output_fieldname").setValue(r, foobar);
-
-  */
-
-	String subject_in = get(Fields.In, "项目").getString(r);
-	String subject_out = get(Fields.In, "项目_1").getString(r);
-
-	// 收入
-	if (null != subject_in &amp;&amp; (subject_in.contains("本年收入") || subject_in.contains("上年结转"))) {
-		psubject_in = subject_in;
-	}
-	if (null != subject_in &amp;&amp; subject_in.contains("收入总计")) {
-		psubject_in = "";
-	}
-	get(Fields.Out, "psubject_in").setValue(r, psubject_in);
-
-	// 支出
-	if (null != subject_out &amp;&amp; (subject_out.contains("本年支出") || subject_out.contains("结转下年"))) {
-		psubject_out = subject_out;
-	}
-	if (null != subject_out &amp;&amp; subject_out.contains("支出总计")) {
-		psubject_out = "";
-	}
-	get(Fields.Out, "psubject_out").setValue(r, psubject_out);
-
-  // Send the row on to the next step.
-  putRow(data.outputRowMeta, r);
-
-  return true;
-}
-</class_source>
-      </definition>
-    </definitions>
-    <fields>
-      <field>
-        <field_name>psubject_in</field_name>
-        <field_type>String</field_type>
-        <field_length>-1</field_length>
-        <field_precision>-1</field_precision>
-      </field>
-      <field>
-        <field_name>psubject_out</field_name>
-        <field_type>String</field_type>
-        <field_length>-1</field_length>
-        <field_precision>-1</field_precision>
-      </field>
-    </fields>
-    <clear_result_fields>N</clear_result_fields>
-    <info_steps/>
-    <target_steps/>
-    <usage_parameters/>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>512</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>字符串替换</name>
     <type>ReplaceString</type>
     <description/>
@@ -1275,6 +1078,224 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
     </GUI>
   </step>
   <step>
+    <name>正则表达式（根据文件名拆分年和部门）</name>
+    <type>RegexEval</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <script>^(\d+)年.+?([\u4e00-\u9fa5]+)部.*$</script>
+    <matcher>file_name</matcher>
+    <resultfieldname>result</resultfieldname>
+    <usevar>N</usevar>
+    <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>Y</replacefields>
+    <canoneq>N</canoneq>
+    <caseinsensitive>N</caseinsensitive>
+    <comment>N</comment>
+    <dotall>N</dotall>
+    <multiline>N</multiline>
+    <unicode>N</unicode>
+    <unix>N</unix>
+    <fields>
+      <field>
+        <name>year</name>
+        <type>Integer</type>
+        <format/>
+        <group>1</group>
+        <decimal/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>both</trimtype>
+        <currency/>
+      </field>
+      <field>
+        <name>gov_dept</name>
+        <type>String</type>
+        <format/>
+        <group>2</group>
+        <decimal/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>both</trimtype>
+        <currency/>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>736</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>表输出-支出</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>47bss_pro</connection>
+    <schema>bss_pro</schema>
+    <table>analysis_budget_dept_s1</table>
+    <commit>1000000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>subject</column_name>
+        <stream_name>项目_1</stream_name>
+      </field>
+      <field>
+        <column_name>budget_num</column_name>
+        <stream_name>合计</stream_name>
+      </field>
+      <field>
+        <column_name>s1</column_name>
+        <stream_name>一般公共预算财政拨款</stream_name>
+      </field>
+      <field>
+        <column_name>s2</column_name>
+        <stream_name>政府性基金预算财政拨款</stream_name>
+      </field>
+      <field>
+        <column_name>id</column_name>
+        <stream_name>id_out</stream_name>
+      </field>
+      <field>
+        <column_name>psubject</column_name>
+        <stream_name>psubject_out</stream_name>
+      </field>
+      <field>
+        <column_name>year</column_name>
+        <stream_name>year</stream_name>
+      </field>
+      <field>
+        <column_name>title</column_name>
+        <stream_name>title</stream_name>
+      </field>
+      <field>
+        <column_name>gov_dept</column_name>
+        <stream_name>gov_dept</stream_name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>表输出-收入</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>47bss_pro</connection>
+    <schema>bss_pro</schema>
+    <table>analysis_budget_dept_s1</table>
+    <commit>1000000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>title</column_name>
+        <stream_name>title</stream_name>
+      </field>
+      <field>
+        <column_name>year</column_name>
+        <stream_name>year</stream_name>
+      </field>
+      <field>
+        <column_name>subject</column_name>
+        <stream_name>项目</stream_name>
+      </field>
+      <field>
+        <column_name>budget_num</column_name>
+        <stream_name>预算数</stream_name>
+      </field>
+      <field>
+        <column_name>psubject</column_name>
+        <stream_name>psubject_in</stream_name>
+      </field>
+      <field>
+        <column_name>id</column_name>
+        <stream_name>id_in</stream_name>
+      </field>
+      <field>
+        <column_name>gov_dept</column_name>
+        <stream_name>gov_dept</stream_name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>896</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>过滤记录-支出（过滤空行） </name>
     <type>FilterRows</type>
     <description/>
@@ -1325,14 +1346,14 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
       </output>
     </remotesteps>
     <GUI>
-      <xloc>672</xloc>
-      <yloc>272</yloc>
+      <xloc>736</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>行扁平化</name>
-    <type>Flattener</type>
+    <name>过滤记录-收入（过滤空行）</name>
+    <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1341,9 +1362,37 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <field_name/>
-    <fields>
-        </fields>
+    <send_true_to>表输出-收入</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>Y</negated>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>项目</leftvalue>
+            <function>IS NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>OR</operator>
+            <leftvalue>项目</leftvalue>
+            <function>ENDS WITH</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>String</type>
+              <text>……</text>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>N</isnull>
+              <mask/>
+            </value>
+          </condition>
+        </conditions>
+      </condition>
+    </compare>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1353,74 +1402,8 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1048</xloc>
-      <yloc>372</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>正则表达式</name>
-    <type>RegexEval</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <script>^(\d+)年.+?([\u4e00-\u9fa5]+)部.*$</script>
-    <matcher>file_name</matcher>
-    <resultfieldname>result</resultfieldname>
-    <usevar>N</usevar>
-    <allowcapturegroups>Y</allowcapturegroups>
-    <replacefields>Y</replacefields>
-    <canoneq>N</canoneq>
-    <caseinsensitive>N</caseinsensitive>
-    <comment>N</comment>
-    <dotall>N</dotall>
-    <multiline>N</multiline>
-    <unicode>N</unicode>
-    <unix>N</unix>
-    <fields>
-      <field>
-        <name>year</name>
-        <type>Integer</type>
-        <format/>
-        <group>1</group>
-        <decimal/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>both</trimtype>
-        <currency/>
-      </field>
-      <field>
-        <name>gov_dept</name>
-        <type>Integer</type>
-        <format/>
-        <group>2</group>
-        <decimal/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>both</trimtype>
-        <currency/>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>288</xloc>
-      <yloc>80</yloc>
+      <xloc>736</xloc>
+      <yloc>48</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
