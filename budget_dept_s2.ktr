@@ -507,7 +507,7 @@
     </hop>
     <hop>
       <from>过滤记录（过滤空行）</from>
-      <to>表输出-收入</to>
+      <to>表输出（analysis_budget_dept_s2_out_general）</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -878,7 +878,7 @@ var UID = new UUID().id;</jsScript_script>
     </GUI>
   </step>
   <step>
-    <name>表输出-收入</name>
+    <name>表输出（analysis_budget_dept_s2_out_general）</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -890,7 +890,7 @@ var UID = new UUID().id;</jsScript_script>
     </partitioning>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s2</table>
+    <table>analysis_budget_dept_s2_out_general</table>
     <commit>1000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
@@ -952,8 +952,8 @@ var UID = new UUID().id;</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
-      <yloc>192</yloc>
+      <xloc>672</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -968,7 +968,7 @@ var UID = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出-收入</send_true_to>
+    <send_true_to>表输出（analysis_budget_dept_s2_out_general）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>

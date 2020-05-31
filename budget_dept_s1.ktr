@@ -517,12 +517,12 @@
     </hop>
     <hop>
       <from>过滤记录-支出（过滤空行） </from>
-      <to>表输出-支出</to>
+      <to>表输出-支出（analysis_budget_dept_s1_out_fa）</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>过滤记录-收入（过滤空行）</from>
-      <to>表输出-收入</to>
+      <to>表输出-收入（analysis_budget_dept_s1_out_fa）</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -1144,7 +1144,7 @@ var UID2 = new UUID().id;</jsScript_script>
     </GUI>
   </step>
   <step>
-    <name>表输出-支出</name>
+    <name>表输出-支出（analysis_budget_dept_s1_out_fa）</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1156,7 +1156,7 @@ var UID2 = new UUID().id;</jsScript_script>
     </partitioning>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s1</table>
+    <table>analysis_budget_dept_s1_out_fa</table>
     <commit>1000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
@@ -1181,14 +1181,6 @@ var UID2 = new UUID().id;</jsScript_script>
         <stream_name>合计</stream_name>
       </field>
       <field>
-        <column_name>s1</column_name>
-        <stream_name>一般公共预算财政拨款</stream_name>
-      </field>
-      <field>
-        <column_name>s2</column_name>
-        <stream_name>政府性基金预算财政拨款</stream_name>
-      </field>
-      <field>
         <column_name>id</column_name>
         <stream_name>id_out</stream_name>
       </field>
@@ -1208,6 +1200,14 @@ var UID2 = new UUID().id;</jsScript_script>
         <column_name>gov_dept</column_name>
         <stream_name>gov_dept</stream_name>
       </field>
+      <field>
+        <column_name>fa_general</column_name>
+        <stream_name>一般公共预算财政拨款</stream_name>
+      </field>
+      <field>
+        <column_name>fa_gov_fund</column_name>
+        <stream_name>政府性基金预算财政拨款</stream_name>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1218,13 +1218,13 @@ var UID2 = new UUID().id;</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>912</xloc>
+      <xloc>1024</xloc>
       <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>表输出-收入</name>
+    <name>表输出-收入（analysis_budget_dept_s1_out_fa）</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1236,7 +1236,7 @@ var UID2 = new UUID().id;</jsScript_script>
     </partitioning>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s1</table>
+    <table>analysis_budget_dept_s1_out_fa</table>
     <commit>1000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
@@ -1290,7 +1290,7 @@ var UID2 = new UUID().id;</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>896</xloc>
+      <xloc>992</xloc>
       <yloc>48</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1306,7 +1306,7 @@ var UID2 = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出-支出</send_true_to>
+    <send_true_to>表输出-支出（analysis_budget_dept_s1_out_fa）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
@@ -1362,7 +1362,7 @@ var UID2 = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出-收入</send_true_to>
+    <send_true_to>表输出-收入（analysis_budget_dept_s1_out_fa）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
