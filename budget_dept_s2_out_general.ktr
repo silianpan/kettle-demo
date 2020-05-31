@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>analysis_budget_dept_s5_out_gov_fund</name>
+    <name>budget_dept_s2_out_general</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -507,7 +507,7 @@
     </hop>
     <hop>
       <from>过滤记录（过滤空行）</from>
-      <to>表输出（analysis_budget_dept_s5_out_gov_fund）</to>
+      <to>表输出（analysis_budget_dept_s2_out_general）</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -568,7 +568,7 @@
         <group/>
       </field>
       <field>
-        <name>科目名称　</name>
+        <name>科目名称</name>
         <type>String</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -580,20 +580,8 @@
         <group/>
       </field>
       <field>
-        <name>单位代码　</name>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-      </field>
-      <field>
-        <name>合计-本年政府性基金预算财政拨款支出</name>
-        <type>String</type>
+        <name>小计</name>
+        <type>Number</type>
         <length>-1</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
@@ -605,7 +593,7 @@
       </field>
       <field>
         <name>基本支出</name>
-        <type>String</type>
+        <type>Number</type>
         <length>-1</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
@@ -617,7 +605,7 @@
       </field>
       <field>
         <name>项目支出</name>
-        <type>String</type>
+        <type>Number</type>
         <length>-1</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
@@ -630,8 +618,8 @@
     </fields>
     <sheets>
       <sheet>
-        <name>表五政府性基金预算支出表</name>
-        <startrow>2</startrow>
+        <name>表二一般公共预算支出表</name>
+        <startrow>3</startrow>
         <startcol>0</startcol>
       </sheet>
     </sheets>
@@ -890,7 +878,7 @@ var UID = new UUID().id;</jsScript_script>
     </GUI>
   </step>
   <step>
-    <name>表输出（analysis_budget_dept_s5_out_gov_fund）</name>
+    <name>表输出（analysis_budget_dept_s2_out_general）</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -902,7 +890,7 @@ var UID = new UUID().id;</jsScript_script>
     </partitioning>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s5_out_gov_fund</table>
+    <table>analysis_budget_dept_s2_out_general</table>
     <commit>1000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
@@ -935,20 +923,12 @@ var UID = new UUID().id;</jsScript_script>
         <stream_name>科目编码</stream_name>
       </field>
       <field>
-        <column_name>id</column_name>
-        <stream_name>id</stream_name>
-      </field>
-      <field>
         <column_name>subject</column_name>
-        <stream_name>科目名称　</stream_name>
+        <stream_name>科目名称</stream_name>
       </field>
       <field>
-        <column_name>unit_code</column_name>
-        <stream_name>单位代码　</stream_name>
-      </field>
-      <field>
-        <column_name>out_total</column_name>
-        <stream_name>合计-本年政府性基金预算财政拨款支出</stream_name>
+        <column_name>subtotal</column_name>
+        <stream_name>小计</stream_name>
       </field>
       <field>
         <column_name>out_base</column_name>
@@ -957,6 +937,10 @@ var UID = new UUID().id;</jsScript_script>
       <field>
         <column_name>out_project</column_name>
         <stream_name>项目支出</stream_name>
+      </field>
+      <field>
+        <column_name>id</column_name>
+        <stream_name>id</stream_name>
       </field>
     </fields>
     <attributes/>
@@ -969,7 +953,7 @@ var UID = new UUID().id;</jsScript_script>
     </remotesteps>
     <GUI>
       <xloc>672</xloc>
-      <yloc>304</yloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -984,7 +968,7 @@ var UID = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出（analysis_budget_dept_s5_out_gov_fund）</send_true_to>
+    <send_true_to>表输出（analysis_budget_dept_s2_out_general）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
@@ -992,14 +976,14 @@ var UID = new UUID().id;</jsScript_script>
         <conditions>
           <condition>
             <negated>N</negated>
-            <leftvalue>科目名称　</leftvalue>
+            <leftvalue>科目名称</leftvalue>
             <function>IS NULL</function>
             <rightvalue/>
           </condition>
           <condition>
             <negated>N</negated>
             <operator>OR</operator>
-            <leftvalue>科目名称　</leftvalue>
+            <leftvalue>科目名称</leftvalue>
             <function>ENDS WITH</function>
             <rightvalue/>
             <value>

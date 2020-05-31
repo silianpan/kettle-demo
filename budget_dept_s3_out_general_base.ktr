@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>budget_dept_s2</name>
+    <name>budget_dept_s3_out_general_base</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -507,7 +507,7 @@
     </hop>
     <hop>
       <from>过滤记录（过滤空行）</from>
-      <to>表输出（analysis_budget_dept_s2_out_general）</to>
+      <to>表输出（analysis_budget_dept_s3_out_general_base）</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -580,7 +580,7 @@
         <group/>
       </field>
       <field>
-        <name>小计</name>
+        <name>合计</name>
         <type>Number</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -592,7 +592,7 @@
         <group/>
       </field>
       <field>
-        <name>基本支出</name>
+        <name>人员经费</name>
         <type>Number</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -604,7 +604,19 @@
         <group/>
       </field>
       <field>
-        <name>项目支出</name>
+        <name>公用经费</name>
+        <type>Number</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+      </field>
+      <field>
+        <name>对个人和家庭补助</name>
         <type>Number</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -618,7 +630,7 @@
     </fields>
     <sheets>
       <sheet>
-        <name>表二一般公共预算支出表</name>
+        <name>表三一般公共预算基本支出表</name>
         <startrow>3</startrow>
         <startcol>0</startcol>
       </sheet>
@@ -878,7 +890,7 @@ var UID = new UUID().id;</jsScript_script>
     </GUI>
   </step>
   <step>
-    <name>表输出（analysis_budget_dept_s2_out_general）</name>
+    <name>表输出（analysis_budget_dept_s3_out_general_base）</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -890,7 +902,7 @@ var UID = new UUID().id;</jsScript_script>
     </partitioning>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
-    <table>analysis_budget_dept_s2_out_general</table>
+    <table>analysis_budget_dept_s3_out_general_base</table>
     <commit>1000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
@@ -927,20 +939,24 @@ var UID = new UUID().id;</jsScript_script>
         <stream_name>科目名称</stream_name>
       </field>
       <field>
-        <column_name>subtotal</column_name>
-        <stream_name>小计</stream_name>
-      </field>
-      <field>
-        <column_name>out_base</column_name>
-        <stream_name>基本支出</stream_name>
-      </field>
-      <field>
-        <column_name>out_project</column_name>
-        <stream_name>项目支出</stream_name>
-      </field>
-      <field>
         <column_name>id</column_name>
         <stream_name>id</stream_name>
+      </field>
+      <field>
+        <column_name>subtotal</column_name>
+        <stream_name>合计</stream_name>
+      </field>
+      <field>
+        <column_name>fund_person</column_name>
+        <stream_name>人员经费</stream_name>
+      </field>
+      <field>
+        <column_name>fund_public</column_name>
+        <stream_name>公用经费</stream_name>
+      </field>
+      <field>
+        <column_name>fund_subsidy</column_name>
+        <stream_name>对个人和家庭补助</stream_name>
       </field>
     </fields>
     <attributes/>
@@ -953,7 +969,7 @@ var UID = new UUID().id;</jsScript_script>
     </remotesteps>
     <GUI>
       <xloc>672</xloc>
-      <yloc>336</yloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -968,7 +984,7 @@ var UID = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出（analysis_budget_dept_s2_out_general）</send_true_to>
+    <send_true_to>表输出（analysis_budget_dept_s3_out_general_base）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
