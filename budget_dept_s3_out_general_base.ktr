@@ -501,11 +501,6 @@
   </connection>
   <order>
     <hop>
-      <from>Excel输入</from>
-      <to>JavaScript代码（生成UUID）</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>过滤记录（过滤空行）</from>
       <to>表输出（analysis_budget_dept_s3_out_general_base）</to>
       <enabled>Y</enabled>
@@ -518,6 +513,21 @@
     <hop>
       <from>JavaScript代码（生成UUID）</from>
       <to>正则表达式（根据文件名拆分年和部门）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>字符串替换（替换中间空格）</from>
+      <to>Java 代码（修改合计行）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Excel输入</from>
+      <to>字符串替换（替换中间空格）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Java 代码（修改合计行）</from>
+      <to>JavaScript代码（生成UUID）</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -663,7 +673,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
+      <xloc>96</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -818,7 +828,7 @@ var UID = new UUID().id;</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>224</xloc>
+      <xloc>272</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1026,6 +1036,157 @@ var UID = new UUID().id;</jsScript_script>
     <GUI>
       <xloc>672</xloc>
       <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Java 代码（修改合计行）</name>
+    <type>UserDefinedJavaClass</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <definitions>
+      <definition>
+        <class_type>TRANSFORM_CLASS</class_type>
+        <class_name>Processor</class_name>
+        <class_source>public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws KettleException {
+  if (first) {
+    first = false;
+
+    /* TODO: Your code here. (Using info fields)
+
+    FieldHelper infoField = get(Fields.Info, "info_field_name");
+
+    RowSet infoStream = findInfoRowSet("info_stream_tag");
+
+    Object[] infoRow = null;
+
+    int infoRowCount = 0;
+
+    // Read all rows from info step before calling getRow() method, which returns first row from any
+    // input rowset. As rowMeta for info and input steps varies getRow() can lead to errors.
+    while((infoRow = getRowFrom(infoStream)) != null){
+
+      // do something with info data
+      infoRowCount++;
+    }
+    */
+  }
+
+  Object[] r = getRow();
+
+  if (r == null) {
+    setOutputDone();
+    return false;
+  }
+
+  // It is always safest to call createOutputRow() to ensure that your output row's Object[] is large
+  // enough to handle any new fields you are creating in this step.
+  r = createOutputRow(r, data.outputRowMeta.size());
+
+  /* TODO: Your code here. (See Sample)
+
+  // Get the value from an input field
+  String foobar = get(Fields.In, "a_fieldname").getString(r);
+
+  foobar += "bar";
+    
+  // Set a value in a new output field
+  get(Fields.Out, "output_fieldname").setValue(r, foobar);
+
+  */
+
+	String subjectCode = get(Fields.In, "科目编码").getString(r);
+
+	// 判断科目编码是否等于合计行
+	if ("合计".equals(subjectCode)) {
+		get(Fields.Out, "科目编码").setValue(r, 0);
+		get(Fields.Out, "科目名称").setValue(r, "合计");
+	} else if (null != subjectCode &amp;&amp; !"".equals(subjectCode) &amp;&amp; subjectCode.lastIndexOf(".") != -1) {
+		get(Fields.Out, "科目编码").setValue(r, subjectCode.substring(0, subjectCode.lastIndexOf(".")));
+	}
+
+  // Send the row on to the next step.
+  putRow(data.outputRowMeta, r);
+
+  return true;
+}
+</class_source>
+      </definition>
+    </definitions>
+    <fields>
+    </fields>
+    <clear_result_fields>N</clear_result_fields>
+    <info_steps/>
+    <target_steps/>
+    <usage_parameters/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>字符串替换（替换中间空格）</name>
+    <type>ReplaceString</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>科目编码</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string> </replace_string>
+        <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>科目名称</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string> </replace_string>
+        <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>96</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
