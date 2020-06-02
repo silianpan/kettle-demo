@@ -568,11 +568,11 @@
     <accept_field/>
     <accept_stepname/>
     <file>
-      <name>/Users/panliu/Downloads/人大一标段数据文件/第三次收集/地震局/2020年地震局预算公开/2020年度地震局部门预算公开明细表.xls</name>
-      <filemask/>
+      <name>/Users/panliu/Downloads/test_budget_dept</name>
+      <filemask>.*.xls</filemask>
       <exclude_filemask/>
       <file_required>N</file_required>
-      <include_subfolders>N</include_subfolders>
+      <include_subfolders>Y</include_subfolders>
     </file>
     <fields>
       <field>
@@ -1265,7 +1265,7 @@ var UID2 = new UUID().id;</jsScript_script>
         <conditions>
           <condition>
             <negated>N</negated>
-            <leftvalue>合计</leftvalue>
+            <leftvalue>合计_1</leftvalue>
             <function>IS NULL</function>
             <rightvalue/>
           </condition>
