@@ -625,6 +625,18 @@
         <decimal/>
         <group/>
       </field>
+      <field>
+        <name>备注</name>
+        <type>String</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+      </field>
     </fields>
     <sheets>
       <sheet>
@@ -994,6 +1006,18 @@ var UID = new UUID().id;</jsScript_script>
         <is_unicode>no</is_unicode>
       </field>
       <field>
+        <in_stream_name>备注</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string> </replace_string>
+        <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
         <in_stream_name>title</in_stream_name>
         <out_stream_name/>
         <use_regex>no</use_regex>
@@ -1162,6 +1186,10 @@ var UID = new UUID().id;</jsScript_script>
       <field>
         <column_name>id</column_name>
         <stream_name>id</stream_name>
+      </field>
+      <field>
+        <column_name>remark</column_name>
+        <stream_name>备注</stream_name>
       </field>
     </fields>
     <attributes/>
