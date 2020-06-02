@@ -613,7 +613,7 @@
       </field>
       <field>
         <name>合计</name>
-        <type>Number</type>
+        <type>String</type>
         <length>-1</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
@@ -625,7 +625,7 @@
       </field>
       <field>
         <name>一般公共预算财政拨款</name>
-        <type>Number</type>
+        <type>String</type>
         <length>-1</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
@@ -1006,7 +1006,7 @@ var UID2 = new UUID().id;</jsScript_script>
         <in_stream_name>预算数</in_stream_name>
         <out_stream_name/>
         <use_regex>no</use_regex>
-        <replace_string/>
+        <replace_string> </replace_string>
         <replace_by_string/>
         <set_empty_string>N</set_empty_string>
         <replace_field_by_string/>
@@ -1027,10 +1027,34 @@ var UID2 = new UUID().id;</jsScript_script>
         <is_unicode>no</is_unicode>
       </field>
       <field>
+        <in_stream_name>合计</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string> </replace_string>
+        <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>一般公共预算财政拨款</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string> </replace_string>
+        <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
         <in_stream_name>政府性基金预算财政拨款</in_stream_name>
         <out_stream_name/>
         <use_regex>no</use_regex>
-        <replace_string/>
+        <replace_string> </replace_string>
         <replace_by_string/>
         <set_empty_string>N</set_empty_string>
         <replace_field_by_string/>
@@ -1039,10 +1063,10 @@ var UID2 = new UUID().id;</jsScript_script>
         <is_unicode>no</is_unicode>
       </field>
       <field>
-        <in_stream_name>id_out</in_stream_name>
+        <in_stream_name>title</in_stream_name>
         <out_stream_name/>
         <use_regex>no</use_regex>
-        <replace_string/>
+        <replace_string> </replace_string>
         <replace_by_string/>
         <set_empty_string>N</set_empty_string>
         <replace_field_by_string/>
@@ -1051,10 +1075,10 @@ var UID2 = new UUID().id;</jsScript_script>
         <is_unicode>no</is_unicode>
       </field>
       <field>
-        <in_stream_name>id_in</in_stream_name>
+        <in_stream_name>file_name</in_stream_name>
         <out_stream_name/>
         <use_regex>no</use_regex>
-        <replace_string/>
+        <replace_string> </replace_string>
         <replace_by_string/>
         <set_empty_string>N</set_empty_string>
         <replace_field_by_string/>
@@ -1157,7 +1181,7 @@ var UID2 = new UUID().id;</jsScript_script>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
     <table>analysis_budget_dept_s1_out_fa</table>
-    <commit>1000000</commit>
+    <commit>10000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
     <use_batch>Y</use_batch>
@@ -1237,7 +1261,7 @@ var UID2 = new UUID().id;</jsScript_script>
     <connection>47bss_pro</connection>
     <schema>bss_pro</schema>
     <table>analysis_budget_dept_s1_out_fa</table>
-    <commit>1000000</commit>
+    <commit>10000000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
     <use_batch>Y</use_batch>
