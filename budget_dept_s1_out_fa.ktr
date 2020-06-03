@@ -516,16 +516,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>过滤记录-支出（过滤空行） </from>
-      <to>表输出-支出（analysis_budget_dept_s1_out_fa）</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>过滤记录-收入（过滤空行）</from>
-      <to>表输出-收入（analysis_budget_dept_s1_out_fa）</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Java 代码（科目父级关系）</from>
       <to>正则表达式（根据文件名拆分年和部门）</to>
       <enabled>Y</enabled>
@@ -538,6 +528,26 @@
     <hop>
       <from>正则表达式（根据文件名拆分年和部门）</from>
       <to>过滤记录-支出（过滤空行） </to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>过滤记录-收入（过滤空行）</from>
+      <to>增加常量（收入）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>增加常量（收入）</from>
+      <to>表输出-收入（analysis_budget_dept_s1_out_fa）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>过滤记录-支出（过滤空行） </from>
+      <to>增加常量（支出）</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>增加常量（支出）</from>
+      <to>表输出-支出（analysis_budget_dept_s1_out_fa）</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -979,6 +989,84 @@ var UID2 = new UUID().id;</jsScript_script>
     </GUI>
   </step>
   <step>
+    <name>增加常量（支出）</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>fund_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>支出</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>增加常量（收入）</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>fund_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>收入</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>字符串替换</name>
     <type>ReplaceString</type>
     <description/>
@@ -1232,6 +1320,10 @@ var UID2 = new UUID().id;</jsScript_script>
         <column_name>fa_gov_fund</column_name>
         <stream_name>政府性基金预算财政拨款</stream_name>
       </field>
+      <field>
+        <column_name>fund_type</column_name>
+        <stream_name>fund_type</stream_name>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1304,6 +1396,10 @@ var UID2 = new UUID().id;</jsScript_script>
         <column_name>gov_dept</column_name>
         <stream_name>gov_dept</stream_name>
       </field>
+      <field>
+        <column_name>fund_type</column_name>
+        <stream_name>fund_type</stream_name>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1330,7 +1426,7 @@ var UID2 = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出-支出（analysis_budget_dept_s1_out_fa）</send_true_to>
+    <send_true_to>增加常量（支出）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
@@ -1386,7 +1482,7 @@ var UID2 = new UUID().id;</jsScript_script>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>表输出-收入（analysis_budget_dept_s1_out_fa）</send_true_to>
+    <send_true_to>增加常量（收入）</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
